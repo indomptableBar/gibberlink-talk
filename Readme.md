@@ -25,7 +25,7 @@ GibberLink invite les agents à passer à un protocole de communication plus eff
 
 GGWave est une bibliothèque sonore open source dans laquelle chaque son est un petit morceau de données. Cela permet aux ordinateurs de communiquer plus rapidement et plus efficacement que la parole humaine.
 
-Cependant, pour l'oreille humaine, GGWave ressemble à une série de « bips » et de « boops ».
+Cependant, pour l'oreille humaine, GGWave ressemble à la langue du robot R2D2.
 
 
 ---
