@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gibberlink - Convertisseur Français</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #e0e0e0;
+}
+.container {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 40px;
+  width: 520px;
+  max-width: 90vw;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+h1 {
+  font-size: 24px;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #aaa;
+}
+textarea {
+  width: 100%;
+  height: 120px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 14px;
+  color: #fff;
+  font-size: 15px;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+textarea:focus {
+  outline: none;
+  border-color: #3a7bd5;
+}
+textarea::placeholder { color: #666; }
+button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-top: 16px;
+}
+#convertBtn {
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+  color: #fff;
+}
+#convertBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(58,123,213,0.4);
+}
+#convertBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+#downloadBtn {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+  text-decoration: none;
+  display: none;
+  text-align: center;
+}
+#downloadBtn:hover {
+  background: rgba(255,255,255,0.15);
+}
+.controls { margin-top: 20px; }
+#status {
+  font-size: 13px;
+  text-align: center;
+  margin-top: 12px;
+  min-height: 20px;
+  color: #888;
+}
+#status.error { color: #ff6b6b; }
+#status.success { color: #51cf66; }
+.spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.info {
+  margin-top: 20px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Gibberlink</h1>
+  <div class="subtitle">Convertissez votre texte français en signaux sonores</div>
+
+  <label for="textInput">Votre texte</label>
+  <textarea id="textInput" placeholder="Entrez votre texte en français…&#10;Ex: Bonjour, comment allez-vous aujourd'hui ?"></textarea>
+
+  <button id="convertBtn">Convertir en Gibberlink</button>
+
+  <div class="controls">
+    <div class="spinner" id="spinner"></div>
+    <div id="status"></div>
+    <a id="downloadBtn" download="gibberlink.mp3">Télécharger en MP3</a>
+  </div>
+
+  <div class="info">Le texte est encodé via le protocole Gibberlink (ggwave) en signaux audio.</div>
+
+  <div style="margin-top: 16px; padding: 10px 12px; background: rgba(255,200,0,0.08); border-radius: 8px; font-size: 11px; color: #b8860b; line-height: 1.5;">
+    ⚠ Serveur local requis : ouvrir avec un serveur HTTP (<code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;color:#ccc;">python3 -m http.server</code> puis ouvrir <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;color:#ccc;">http://localhost:8000</code>).
+  </div>
+</div>
+
+<script src="ggwave.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script>
+(function() {
+  const textInput = document.getElementById('textInput');
+  const convertBtn = document.getElementById('convertBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const status = document.getElementById('status');
+  const spinner = document.getElementById('spinner');
+
+  let ggwave = null;
+  let instance = null;
+
+  function setStatus(msg, type) {
+    status.textContent = msg;
+    status.className = type || '';
+  }
+
+  async function initModule() {
+    for (let attempt = 0; attempt < 30; attempt++) {
+      if (typeof ggwave_factory !== 'undefined') break;
+      await new Promise(r => setTimeout(r, 200));
+    }
+    if (typeof ggwave_factory === 'undefined') {
+      setStatus('Erreur : ggwave_factory introuvable. Utilisez un serveur HTTP.', 'error');
+      return;
+    }
+    try {
+      ggwave = await ggwave_factory();
+      const params = ggwave.getDefaultParameters();
+      params.sampleRateInp = 48000;
+      params.sampleRateOut = 48000;
+      for (let i = 0; i < 5; i++) {
+        instance = ggwave.init(params);
+        if (instance) break;
+        await new Promise(r => setTimeout(r, 200));
+      }
+      if (!instance) {
+        setStatus('Erreur : échec d\'initialisation ggwave', 'error');
+        return;
+      }
+      convertBtn.disabled = false;
+      setStatus('Module prêt', 'success');
+    } catch (e) {
+      setStatus('Erreur de chargement : ' + e.message, 'error');
+    }
+  }
+  initModule();
+
+  function floatToInt16(float32) {
+    const len = float32.length;
+    const int16 = new Int16Array(len);
+    for (let i = 0; i < len; i++) {
+      const s = Math.max(-1, Math.min(1, float32[i]));
+      int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    }
+    return int16;
+  }
+
+  function encodeMp3(pcmInt16, sampleRate) {
+    var mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+    var mp3Data = [];
+    var chunkSize = 1152;
+    for (var i = 0; i < pcmInt16.length; i += chunkSize) {
+      var chunk = pcmInt16.subarray(i, Math.min(i + chunkSize, pcmInt16.length));
+      var mp3buf = mp3encoder.encodeBuffer(chunk);
+      if (mp3buf.length > 0) mp3Data.push(mp3buf);
+    }
+    var last = mp3encoder.flush();
+    if (last.length > 0) mp3Data.push(last);
+    return new Blob(mp3Data, { type: 'audio/mp3' });
+  }
+
+  convertBtn.addEventListener('click', function() {
+    const text = textInput.value.trim();
+    if (!text) {
+      setStatus('Veuillez entrer du texte', 'error');
+      return;
+    }
+    if (!instance) {
+      setStatus('Module Gibberlink pas encore prêt', 'error');
+      return;
+    }
+
+    convertBtn.disabled = true;
+    spinner.style.display = 'block';
+    setStatus('Encodage en cours…', '');
+
+    setTimeout(function() {
+      try {
+        var waveform = ggwave.encode(instance, text, ggwave.ProtocolId.GGWAVE_PROTOCOL_AUDIBLE_FAST, 50);
+
+        if (!waveform || waveform.byteLength === 0) {
+          setStatus('Erreur : signal audio vide', 'error');
+          convertBtn.disabled = false;
+          spinner.style.display = 'none';
+          return;
+        }
+
+        var floatSamples = new Float32Array(waveform.buffer, waveform.byteOffset, waveform.byteLength / 4);
+        var int16 = floatToInt16(floatSamples);
+        var mp3Blob = encodeMp3(int16, 48000);
+
+        var url = URL.createObjectURL(mp3Blob);
+        downloadBtn.href = url;
+        downloadBtn.style.display = 'block';
+        setStatus('Conversion réussie !', 'success');
+      } catch (e) {
+        setStatus('Erreur lors de l\'encodage : ' + e.message, 'error');
+      }
+
+      convertBtn.disabled = false;
+      spinner.style.display = 'none';
+    }, 100);
+  });
+})();
+</script>
+</body>
+</html>
