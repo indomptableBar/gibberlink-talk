@@ -30,7 +30,17 @@ Cependant, pour l'oreille humaine, GGWave ressemble à la langue du robot R2D2.
 
 ---
 
-# Comment cela fonctionne : 
+## 📥 Installation et Exécution
+
+### 1. Cloner le dépôt
+```bash
+[https://github.com/indomptableBar/gibberlink-talk.git]
+cd gibberlink-talk
+
+
+
+
+## Comment cela fonctionne : 
 
 1 - Ouvrir votre navigateur avec le fichier nommé index.html
 
@@ -44,11 +54,14 @@ Cependant, pour l'oreille humaine, GGWave ressemble à la langue du robot R2D2.
 
 ## Vous pouvez le donner a nimporte qui et le faire retraduire avec la page decode.html qui permet de faire le retour en sens inverse. ###
 
+
 Explications : 
 
 Ce projet m'est venu en regardant cette vidéo : https://www.youtube.com/watch?v=EtNagNezo8w
 
 Vous voila maintenant capable de parler en language IA ou langue des robots. (C'est le morse 2.0 )
+
+
 
 
 
