@@ -17,6 +17,17 @@ Ce projet est conçu pour démontrer :
 - L'implémentation d'une interface utilisateur simple et réactive.
 - La generation d'un fichier .MP3 suite a l'ecriture d'une phrase .
 
+
+Que fait GibberLink ?
+GibberLink permet à un agent IA de reconnaître lorsqu'il est en communication téléphonique avec un autre agent IA. Une fois que l'agent IA se rend compte qu'il est en communication avec un autre agent IA, 
+
+GibberLink invite les agents à passer à un protocole de communication plus efficace appelé GGWave.
+
+GGWave est une bibliothèque sonore open source dans laquelle chaque son est un petit morceau de données. Cela permet aux ordinateurs de communiquer plus rapidement et plus efficacement que la parole humaine.
+
+Cependant, pour l'oreille humaine, GGWave ressemble à une série de « bips » et de « boops ».
+
+
 ---
 
 # Comment cela fonctionne : 
