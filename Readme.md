@@ -30,15 +30,6 @@ Cependant, pour l'oreille humaine, GGWave ressemble à la langue du robot R2D2.
 
 ---
 
-## 📥 Installation et Exécution
-
-### 1. Cloner le dépôt
-```bash
-[https://github.com/indomptableBar/gibberlink-talk.git]
-cd gibberlink-talk
-
-
-
 
 ## Comment cela fonctionne : 
 
@@ -64,5 +55,10 @@ Vous voila maintenant capable de parler en language IA ou langue des robots. (C'
 
 
 
+## 📥 Installation et Exécution
 
+### 1. Cloner le dépôt
+```bash
+[https://github.com/indomptableBar/gibberlink-talk.git]
+cd gibberlink-talk
 
