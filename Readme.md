@@ -22,9 +22,13 @@ Ce projet est conçu pour démontrer :
 # Comment cela fonctionne : 
 
 1 - Ouvrir votre navigateur avec le fichier nommé index.html
-2 - Ecrire votre texte puis clic sur "Convertir en gibberlink" cela vous donnera un fichier mp3. 
+
+2 - Ecrire votre texte puis clic sur "Convertir en gibberlink" cela vous donnera un fichier mp3.
+
 #### (Votre texte est maintenant traduit en gibberlink le language de l'IA et des robots informatique).
+
 3 - Donner le ou transmettrez le a votre ami
+
 4 - Il utilisera le fichier nommé decode.html et il faudra le glisser dans la page pour permettre de le decoder gibberlink vers français.
 
 ## Vous pouvez le donner a nimporte qui et le faire retraduire avec la page decode.html qui permet de faire le retour en sens inverse. ###
